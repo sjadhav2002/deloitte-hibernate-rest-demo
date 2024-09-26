@@ -51,10 +51,14 @@ public class EmployeeResource {
 
     @PUT
     @Path("/{id}")
-    public Response updateEmployee(@PathParam("id") int id, Employee updatedEmployee) {
+    public Response updateEmployee(@PathParam("id") int id,Map<String, Object> payload) {
         try {
-            employeeService.updateEmployee(updatedEmployee);
-            return Response.ok(updatedEmployee).build();
+        	String firstName = (String) payload.get("firstName");
+            double salary = Double.parseDouble(payload.get("salary").toString());
+            int deptId = Integer.parseInt(payload.get("department").toString());
+            
+            Employee Emp = employeeService.updateEmployee(id, firstName, salary, deptId);
+            return Response.ok(Emp).build();
         } catch (IllegalArgumentException e) {
             return Response.status(Response.Status.BAD_REQUEST).entity(e.getMessage()).build(); 
         }

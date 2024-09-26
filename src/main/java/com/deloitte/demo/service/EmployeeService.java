@@ -21,13 +21,12 @@ public class EmployeeService {
         return e; 
     }
 
-    public Employee updateEmployee(Employee updatedEmployee) {
-        if (updatedEmployee.getId() <= 0) {
+    public Employee updateEmployee(int id, String firstName, double salary, int department) {
+        if (id <= 0) {
             throw new IllegalArgumentException("Invalid employee ID.");
         }
-        System.out.println(updatedEmployee.toString());
-        employeeRepository.updateEmployee(updatedEmployee);
-        return updatedEmployee; 
+        Employee e = employeeRepository.updateEmployee(id, firstName, salary, department);
+        return e; 
     }
 
     public void deleteEmployee(int id) {

@@ -49,22 +49,27 @@ public class EmployeeRepository {
         return query.getResultList();
     }
 
-    public void updateEmployee(Employee updatedEmployee) {
+    public Employee updateEmployee(int id, String firstName, double salary, int department) {
         EntityTransaction transaction = em.getTransaction();
+        Employee emp = new Employee();
         try {
             transaction.begin();
-            Employee existingEmployee = em.find(Employee.class, updatedEmployee.getId());
+            Employee existingEmployee = em.find(Employee.class, id);
             if (existingEmployee != null) {
-                existingEmployee.setFirstName(updatedEmployee.getFirstName());
-                existingEmployee.setSalary(updatedEmployee.getSalary());
+                existingEmployee.setFirstName(firstName);
+                existingEmployee.setSalary(salary);
+                DepartmentRepository depr = new DepartmentRepository();
+                existingEmployee.setDepartment(depr.getDepartmentById(department));
             }
             transaction.commit();
+            return existingEmployee;
         } catch (Exception e) {
             if (transaction.isActive()) {
                 transaction.rollback();
             }
             e.printStackTrace();
         }
+        return emp;
     }
 
     public void deleteEmployee(int id) {
