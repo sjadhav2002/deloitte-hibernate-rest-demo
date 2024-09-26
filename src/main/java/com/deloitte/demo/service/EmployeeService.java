@@ -1,30 +1,46 @@
 package com.deloitte.demo.service;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import com.deloitte.demo.model.Employee;
+import com.deloitte.demo.repository.EmployeeRepository;
 
 public class EmployeeService {
-	
 
-	private List<Employee> empList = new ArrayList<>(
-	        List.of(new Employee(1, "Sonu", 90.25), 
-	                new Employee(2, "Monu", 95.75),
-	                new Employee(3, "Tonu", 92.25))
-	    );
+    private EmployeeRepository employeeRepository = new EmployeeRepository();
 
-	public List<Employee> getAllEmployees() {
-		empList.forEach(System.out::println);
-		return empList;
-	}
-	
-	public boolean addEmployee(Employee e) {
-		return empList.add(e);
-	}
-	
-	public boolean delEmployee(int id) {
-		return empList.removeIf(emp -> emp.getId() == id);
-	}
+    public List<Employee> getAllEmployees() {
+        return employeeRepository.getAllEmployees();
+    }
 
+    public Employee addEmployee(String firstName, double salary, int department) {
+        if (department <= 0 || firstName == null || salary <= 0) {
+            throw new IllegalArgumentException("Invalid employee details provided.");
+        }
+        Employee e = employeeRepository.addEmployee(firstName, salary, department);
+        return e; 
+    }
+
+    public Employee updateEmployee(Employee updatedEmployee) {
+        if (updatedEmployee.getId() <= 0) {
+            throw new IllegalArgumentException("Invalid employee ID.");
+        }
+        System.out.println(updatedEmployee.toString());
+        employeeRepository.updateEmployee(updatedEmployee);
+        return updatedEmployee; 
+    }
+
+    public void deleteEmployee(int id) {
+        if (id <= 0) {
+            throw new IllegalArgumentException("Invalid employee ID.");
+        }
+        employeeRepository.deleteEmployee(id);
+    }
+
+    public Employee getEmployeeById(int id) {
+        if (id <= 0) {
+            throw new IllegalArgumentException("Invalid employee ID.");
+        }
+        return employeeRepository.getEmployeeById(id);
+    }
 }

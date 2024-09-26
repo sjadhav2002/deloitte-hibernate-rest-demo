@@ -15,11 +15,11 @@ public class Employee {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
 	private int id;
 	
-	private String firstName;
+	private String name;
 	private double salary;
 	
 	@ManyToOne
-    @JoinColumn(name = "dept_id", referencedColumnName = "deptId") // Foreign key in Employee table referencing Department's primary key
+    @JoinColumn(name = "deptId", referencedColumnName = "id")
     private Department department;
 
 	public Employee() {
@@ -28,14 +28,14 @@ public class Employee {
 
 	public Employee(String firstName, double salary) {
 		super();
-		this.firstName = firstName;
+		this.name = firstName;
 		this.salary = salary;
 	}
 
 	public Employee(String firstName, double salary, Department department ) {
 		super();
 		this.department = department;
-		this.firstName = firstName;
+		this.name = firstName;
 		this.salary = salary;
 	}
 
@@ -44,11 +44,11 @@ public class Employee {
 	}
 
 	public String getFirstName() {
-		return firstName;
+		return name;
 	}
 
 	public void setFirstName(String firstName) {
-		this.firstName = firstName;
+		this.name = firstName;
 	}
 
 	public double getSalary() {
@@ -69,7 +69,7 @@ public class Employee {
 
 	@Override
 	public String toString() {
-		return "Employee [id=" + id + ", firstName=" + firstName + ", salary=" + salary + ", department=" + department + "]";
+		return "Employee [id=" + id + ", firstName=" + name + ", salary=" + salary + ", department=" + department.getName() + "]";
 	}
 
 }
