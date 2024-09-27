@@ -3,14 +3,79 @@
 const getAllEmployees = async () => {
     const resp = await fetch("http://localhost:8090/deloitte-hybernate-rest-demo/employees")
     const response = await resp.json();
-    return response;
+    const table = document.createElement("table");
+    table.setAttribute("border", "1");
+
+    const thead = table.createTHead();
+    const headerRow = thead.insertRow();
+    
+    const headers = ["ID", "Name", "Department", "Salary"];
+    headers.forEach(headerText => {
+        const th = document.createElement("th");
+        th.appendChild(document.createTextNode(headerText));
+        headerRow.appendChild(th);
+    });
+
+    const tbody = document.createElement("tbody");
+    response.forEach(employee => {
+        const row = tbody.insertRow();
+
+        const cellId = row.insertCell();
+        const cellName = row.insertCell();
+        const cellDepartment = row.insertCell();
+        const cellSalary = row.insertCell();
+
+        cellId.appendChild(document.createTextNode(employee.id));
+        cellName.appendChild(document.createTextNode(employee.firstName));
+        cellDepartment.appendChild(document.createTextNode(employee.department));
+        cellSalary.appendChild(document.createTextNode(employee.salary));
+    });
+
+    table.appendChild(tbody);
+    const allEmployeeDiv = document.getElementById("AllEmployeeTable");
+    allEmployeeDiv.innerHTML = "";
+    allEmployeeDiv.appendChild(table);
 }
 
 
 const getEmployeebyId = async (id) => {
     const resp = await fetch("http://localhost:8090/deloitte-hybernate-rest-demo/employees/"+id)
     const response = await resp.json();
-    return response;
+
+    const card = document.createElement("div");
+    card.setAttribute("class", "card mb-3");
+
+    const cardHeader = document.createElement("div");
+    cardHeader.setAttribute("class", "card-header");
+    cardHeader.textContent = response.firstName; 
+
+    const cardBody = document.createElement("div");
+    cardBody.setAttribute("class", "card-body");
+
+    const fields = ["ID", "Department", "Salary"];
+    fields.forEach(field => {
+        const p = document.createElement("p");
+        p.setAttribute("class", "card-text");
+
+        switch (field) {
+            case "ID":
+                p.textContent = `ID: ${response.id}`;
+                break;
+            case "Department":
+                p.textContent = `Department: ${response.department}`;
+                break;
+            case "Salary":
+                p.textContent = `Salary: ${response.salary}`;
+                break;
+        }
+        cardBody.appendChild(p);
+    });
+    card.appendChild(cardHeader);
+    card.appendChild(cardBody);
+
+    const employeeByIdDiv = document.getElementById("EmployeebyID");
+    employeeByIdDiv.innerHTML = "";
+    employeeByIdDiv.appendChild(card);
 }
 
 const updateEmployee = async (event) => {
@@ -111,14 +176,76 @@ const addEmployee = async (event) => {
 const getAllDepartments = async () => {
     const resp = await fetch("http://localhost:8090/deloitte-hybernate-rest-demo/departments")
     const response = await resp.json();
-    return response;
+
+    const table = document.createElement("table");
+    table.setAttribute("border", "1");
+
+    const thead = table.createTHead();
+    const headerRow = thead.insertRow();
+    
+    const headers = ["ID", "Name", "Location"];
+    headers.forEach(headerText => {
+        const th = document.createElement("th");
+        th.appendChild(document.createTextNode(headerText));
+        headerRow.appendChild(th);
+    });
+
+    const tbody = document.createElement("tbody");
+    response.forEach(department => {
+        const row = tbody.insertRow();
+
+        const cellId = row.insertCell();
+        const cellName = row.insertCell();
+        const cellLocation = row.insertCell();
+
+        cellId.appendChild(document.createTextNode(department.id));
+        cellName.appendChild(document.createTextNode(department.name));
+        cellLocation.appendChild(document.createTextNode(department.location));
+    });
+
+    table.appendChild(tbody);
+    const allEmployeeDiv = document.getElementById("AllDepartmentsTable");
+    allEmployeeDiv.innerHTML = "";
+    allEmployeeDiv.appendChild(table);
 }
 
 
 const getDepartmentbyId = async (id) => {
     const resp = await fetch("http://localhost:8090/deloitte-hybernate-rest-demo/departments/"+id)
     const response = await resp.json();
-    return response;
+
+    const card = document.createElement("div");
+    card.setAttribute("class", "card mb-3");
+
+    const cardHeader = document.createElement("div");
+    cardHeader.setAttribute("class", "card-header");
+    cardHeader.textContent = response.name; 
+
+    const cardBody = document.createElement("div");
+    cardBody.setAttribute("class", "card-body");
+
+    const fields = ["ID", "Location"];
+    fields.forEach(field => {
+        const p = document.createElement("p");
+        p.setAttribute("class", "card-text");
+
+        switch (field) {
+            case "ID":
+                p.textContent = `ID: ${response.id}`;
+                break;
+            case "Location":
+                p.textContent = `Location: ${response.location}`;
+                break;
+
+        }
+        cardBody.appendChild(p);
+    });
+    card.appendChild(cardHeader);
+    card.appendChild(cardBody);
+
+    const employeeByIdDiv = document.getElementById("DepartmentbyID");
+    employeeByIdDiv.innerHTML = "";
+    employeeByIdDiv.appendChild(card);
 }
 
 const updateDepartment = async (event) => {
