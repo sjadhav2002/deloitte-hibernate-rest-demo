@@ -1,5 +1,6 @@
 package com.deloitte.demo.resource;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -29,7 +30,11 @@ public class EmployeeResource {
         if (employee != null) {
             return Response.ok(employee).build();
         } else {
-            return Response.status(Response.Status.NOT_FOUND).build(); 
+        	Map<String, String> errorResponse = new HashMap<>();
+            errorResponse.put("msg", "Failed");
+            errorResponse.put("reason", "Employee not found");
+        	
+        	return Response.status(Response.Status.ACCEPTED).entity(errorResponse).build();
         }
     }
 
@@ -44,11 +49,19 @@ public class EmployeeResource {
             
             Employee employee = employeeService.addEmployee(firstName, salary, deptId);
             if(employee.getDepartment() == null) {
-            	return Response.status(Response.Status.REQUESTED_RANGE_NOT_SATISFIABLE).entity("Department not found").build(); 
+            	Map<String, String> errorResponse = new HashMap<>();
+                errorResponse.put("msg", "Failed");
+                errorResponse.put("reason", "Department not found");
+            	
+            	return Response.status(Response.Status.ACCEPTED).entity(errorResponse).build(); 
             }
             return Response.status(Response.Status.CREATED).entity(employee).build(); 
         } catch (IllegalArgumentException e) {
-            return Response.status(Response.Status.BAD_REQUEST).entity(e.getMessage()).build(); 
+        	Map<String, String> errorResponse = new HashMap<>();
+            errorResponse.put("msg", "Failed");
+            errorResponse.put("reason", "Internal Server Error");
+        	
+        	return Response.status(Response.Status.ACCEPTED).entity(errorResponse).build();
         }
     }
 
@@ -61,10 +74,22 @@ public class EmployeeResource {
             int deptId = Integer.parseInt(payload.get("department").toString());
             
             Employee Emp = employeeService.updateEmployee(id, firstName, salary, deptId);
-            if (Emp.getDepartment()==null) return Response.status(Response.Status.BAD_REQUEST).entity("Employee or Department not found").build(); 
-            return Response.ok(Emp).build();
+            if (Emp.getDepartment()==null) {
+            	Map<String, String> errorResponse = new HashMap<>();
+                errorResponse.put("msg", "Failed");
+                errorResponse.put("reason", "Employee or Department not found");
+            	
+            	return Response.status(Response.Status.ACCEPTED).entity(errorResponse).build();
+            }; 
+            Map<String, String> resp = new HashMap<>();
+            resp.put("msg", "Success");
+        	return Response.status(Response.Status.ACCEPTED).entity(resp).build();
         } catch (IllegalArgumentException e) {
-            return Response.status(Response.Status.BAD_REQUEST).entity(e.getMessage()).build(); 
+        	Map<String, String> errorResponse = new HashMap<>();
+            errorResponse.put("msg", "Failed");
+            errorResponse.put("reason", "Employee not found");
+        	
+        	return Response.status(Response.Status.ACCEPTED).entity(errorResponse).build(); 
         }
     }
 
@@ -73,10 +98,20 @@ public class EmployeeResource {
     public Response deleteEmployee(@PathParam("id") int id) {
         try {
             boolean b = employeeService.deleteEmployee(id);
-            if (b) return Response.status(Response.Status.ACCEPTED).entity("Success").build();
-            else return Response.status(Response.Status.BAD_REQUEST).entity("Employee Not Found").build();
+            if (b) {
+            	Map<String, String> errorResponse = new HashMap<>();
+                errorResponse.put("msg", "Success");
+            	return Response.status(Response.Status.ACCEPTED).entity(errorResponse).build();
+            } 
+            else {
+            	Map<String, String> errorResponse = new HashMap<>();
+                errorResponse.put("msg", "Failed");
+                errorResponse.put("reason", "Employee not found");
+            	
+            	return Response.status(Response.Status.ACCEPTED).entity(errorResponse).build();
+            }
         } catch (IllegalArgumentException e) {
-            return Response.status(Response.Status.BAD_REQUEST).entity(e.getMessage()).build(); 
+            return Response.status(Response.Status.ACCEPTED).entity(e.getMessage()).build(); 
         }
     }
 }

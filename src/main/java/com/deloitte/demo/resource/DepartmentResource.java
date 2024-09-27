@@ -1,6 +1,8 @@
 package com.deloitte.demo.resource;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
@@ -33,11 +35,14 @@ public class DepartmentResource {
         try {
             Department newDepartment = departmentService.addDepartment(department.getName(), department.getLocation());
             if (newDepartment.getName() == null) {
-            	return Response.status(Response.Status.BAD_REQUEST).entity("Failed").build();
+            	Map<String, String> errorResponse = new HashMap<>();
+                errorResponse.put("msg", "Failed");
+            	
+            	return Response.status(Response.Status.ACCEPTED).entity(errorResponse).build();
             }
             return Response.status(Response.Status.CREATED).entity(newDepartment).build();
         } catch (IllegalArgumentException e) {
-            return Response.status(Response.Status.BAD_REQUEST).entity(e.getMessage()).build();
+            return Response.status(Response.Status.ACCEPTED).entity(e.getMessage()).build();
         }
     }
 
@@ -46,13 +51,21 @@ public class DepartmentResource {
     public Response getDepartmentById(@PathParam("id") int id) {
         try {
             Department department = departmentService.getDepartmentById(id);
-            if (department != null) {
+            if (department.getName() != null) {
                 return Response.ok(department).build();
             } else {
-                return Response.status(Response.Status.NOT_FOUND).entity("Department not found").build();
+            	Map<String, String> errorResponse = new HashMap<>();
+                errorResponse.put("msg", "Failed");
+                errorResponse.put("reason", "Department not found");
+            	
+            	return Response.status(Response.Status.ACCEPTED).entity(errorResponse).build();
             }
         } catch (IllegalArgumentException e) {
-            return Response.status(Response.Status.BAD_REQUEST).entity(e.getMessage()).build();
+        	Map<String, String> errorResponse = new HashMap<>();
+            errorResponse.put("msg", "Failed");
+            errorResponse.put("reason", "Internal Server Error");
+        	
+        	return Response.status(Response.Status.ACCEPTED).entity(errorResponse).build();
         }
     }
 
@@ -62,11 +75,15 @@ public class DepartmentResource {
         try {
             Department updatedDepartment = departmentService.updateDepartment(department);
             if (updatedDepartment.getName() == null) {
-            	return Response.status(Response.Status.BAD_REQUEST).entity("Department Not Found").build();
+            	Map<String, String> errorResponse = new HashMap<>();
+                errorResponse.put("msg", "Failed");
+                errorResponse.put("reason", "Department not found");
+            	
+            	return Response.status(Response.Status.ACCEPTED).entity(errorResponse).build();
             }
             return Response.ok(updatedDepartment).build();
         } catch (IllegalArgumentException e) {
-            return Response.status(Response.Status.BAD_REQUEST).entity(e.getMessage()).build();
+            return Response.status(Response.Status.ACCEPTED).entity(e.getMessage()).build();
         }
     }
 
@@ -75,12 +92,20 @@ public class DepartmentResource {
     public Response deleteDepartment(@PathParam("id") int id) {
         try {
             boolean res = departmentService.deleteDepartment(id);
-            if (res) {
-            	return Response.status(Response.Status.BAD_REQUEST).entity("Department Not Found").build();
+            if (!res) {
+            	Map<String, String> errorResponse = new HashMap<>();
+            	errorResponse.put("msg", "Failed");
+            	errorResponse.put("reason", "Department not found");
+        	
+        	return Response.status(Response.Status.ACCEPTED).entity(errorResponse).build();
             }
-            else return Response.status(Response.Status.CREATED).entity("Success").build();
+            else {
+            Map<String, String> Resp = new HashMap<>();
+            Resp.put("msg", "Success");
+        	
+        	return Response.status(Response.Status.ACCEPTED).entity(Resp).build();}
         } catch (IllegalArgumentException e) {
-            return Response.status(Response.Status.BAD_REQUEST).entity(e.getMessage()).build();
+            return Response.status(Response.Status.ACCEPTED).entity(e.getMessage()).build();
         }
     }
 }
