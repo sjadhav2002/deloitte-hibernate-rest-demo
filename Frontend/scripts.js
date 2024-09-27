@@ -5,6 +5,7 @@ const getAllEmployees = async () => {
     const response = await resp.json();
     const table = document.createElement("table");
     table.setAttribute("border", "1");
+    table.style.width = "100%";
 
     const thead = table.createTHead();
     const headerRow = thead.insertRow();
@@ -179,6 +180,7 @@ const getAllDepartments = async () => {
 
     const table = document.createElement("table");
     table.setAttribute("border", "1");
+    table.style.width = "100%";
 
     const thead = table.createTHead();
     const headerRow = thead.insertRow();
@@ -255,6 +257,7 @@ const updateDepartment = async (event) => {
     const formData = new FormData(form);
 
     const departments = {
+        id : formData.get('id'),
         name: formData.get('name'),
         location: formData.get('location')
     };
