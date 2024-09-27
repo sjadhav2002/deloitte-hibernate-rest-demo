@@ -9,7 +9,7 @@ const getAllEmployees = async () => {
 
     const thead = table.createTHead();
     const headerRow = thead.insertRow();
-    
+
     const headers = ["ID", "Name", "Department", "Salary"];
     headers.forEach(headerText => {
         const th = document.createElement("th");
@@ -40,47 +40,71 @@ const getAllEmployees = async () => {
 
 
 const getEmployeebyId = async (id) => {
-    const resp = await fetch("http://localhost:8090/deloitte-hybernate-rest-demo/employees/"+id)
+    const resp = await fetch("http://localhost:8090/deloitte-hybernate-rest-demo/employees/" + id)
     const response = await resp.json();
 
-    const card = document.createElement("div");
-    card.setAttribute("class", "card mb-3");
+    if (response.msg === "Failed") {
+        const card = document.createElement("div");
+        card.setAttribute("class", "card mb-3");
 
-    const cardHeader = document.createElement("div");
-    cardHeader.setAttribute("class", "card-header");
-    cardHeader.textContent = response.firstName; 
+        const cardHeader = document.createElement("div");
+        cardHeader.setAttribute("class", "card-header");
+        cardHeader.textContent = "Failed to fetch Employee";
 
-    const cardBody = document.createElement("div");
-    cardBody.setAttribute("class", "card-body");
-
-    const fields = ["ID", "Department", "Salary"];
-    fields.forEach(field => {
+        const cardBody = document.createElement("div");
+        cardBody.setAttribute("class", "card-body");
         const p = document.createElement("p");
         p.setAttribute("class", "card-text");
-
-        switch (field) {
-            case "ID":
-                p.textContent = `ID: ${response.id}`;
-                break;
-            case "Department":
-                p.textContent = `Department: ${response.department}`;
-                break;
-            case "Salary":
-                p.textContent = `Salary: ${response.salary}`;
-                break;
-        }
+        p.textContent = `${response.reason}`;
         cardBody.appendChild(p);
-    });
-    card.appendChild(cardHeader);
-    card.appendChild(cardBody);
 
-    const employeeByIdDiv = document.getElementById("EmployeebyID");
-    employeeByIdDiv.innerHTML = "";
-    employeeByIdDiv.appendChild(card);
+        card.appendChild(cardHeader);
+        card.appendChild(cardBody);
+
+        const employeeByIdDiv = document.getElementById("EmployeebyID");
+        employeeByIdDiv.innerHTML = "";
+        employeeByIdDiv.appendChild(card);
+    }
+    else {
+        const card = document.createElement("div");
+        card.setAttribute("class", "card mb-3");
+
+        const cardHeader = document.createElement("div");
+        cardHeader.setAttribute("class", "card-header");
+        cardHeader.textContent = response.firstName;
+
+        const cardBody = document.createElement("div");
+        cardBody.setAttribute("class", "card-body");
+
+        const fields = ["ID", "Department", "Salary"];
+        fields.forEach(field => {
+            const p = document.createElement("p");
+            p.setAttribute("class", "card-text");
+
+            switch (field) {
+                case "ID":
+                    p.textContent = `ID: ${response.id}`;
+                    break;
+                case "Department":
+                    p.textContent = `Department: ${response.department}`;
+                    break;
+                case "Salary":
+                    p.textContent = `Salary: ${response.salary}`;
+                    break;
+            }
+            cardBody.appendChild(p);
+        });
+        card.appendChild(cardHeader);
+        card.appendChild(cardBody);
+
+        const employeeByIdDiv = document.getElementById("EmployeebyID");
+        employeeByIdDiv.innerHTML = "";
+        employeeByIdDiv.appendChild(card);
+    }
 }
 
 const updateEmployee = async (event) => {
-    event.preventDefault();  
+    event.preventDefault();
 
     const form = document.getElementById('updateemployeeForm');
     const formData = new FormData(form);
@@ -93,7 +117,7 @@ const updateEmployee = async (event) => {
 
 
     try {
-        const response = await fetch('http://localhost:8090/deloitte-hybernate-rest-demo/employees/'+formData.get('id'), { 
+        const response = await fetch('http://localhost:8090/deloitte-hybernate-rest-demo/employees/' + formData.get('id'), {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json'
@@ -102,10 +126,10 @@ const updateEmployee = async (event) => {
         });
 
         const resp = await response.json();
-        if (resp.msg === "Failed"){
+        if (resp.msg === "Failed") {
             alert(resp.reason);
         }
-        else{
+        else {
             alert('Employee Updated successfully!');
             window.location.reload();
         }
@@ -116,17 +140,17 @@ const updateEmployee = async (event) => {
 };
 
 const deleteEmployee = async (id) => {
-    const resp = await fetch('http://localhost:8090/deloitte-hybernate-rest-demo/employees/'+id, { 
+    const resp = await fetch('http://localhost:8090/deloitte-hybernate-rest-demo/employees/' + id, {
         method: 'DELETE',
         headers: {
             'Content-Type': 'application/json'
         }
     });
     const response = await resp.json();
-    if (response.msg === "Failed"){
+    if (response.msg === "Failed") {
         alert(response.reason);
     }
-    else{
+    else {
         alert('Employee Deleted successfully!');
         window.location.reload();
     }
@@ -135,7 +159,7 @@ const deleteEmployee = async (id) => {
 }
 
 const addEmployee = async (event) => {
-    event.preventDefault();  
+    event.preventDefault();
 
     const form = document.getElementById('newemployeeForm');
     const formData = new FormData(form);
@@ -148,7 +172,7 @@ const addEmployee = async (event) => {
 
 
     try {
-        const response = await fetch('http://localhost:8090/deloitte-hybernate-rest-demo/employees', { 
+        const response = await fetch('http://localhost:8090/deloitte-hybernate-rest-demo/employees', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -156,10 +180,10 @@ const addEmployee = async (event) => {
             body: JSON.stringify(employee)
         });
         const resp = await response.json();
-        if (resp.msg === "Failed"){
+        if (resp.msg === "Failed") {
             alert(resp.reason);
         }
-        else{
+        else {
             alert('Employee Created successfully!');
             window.location.reload();
         }
@@ -184,7 +208,7 @@ const getAllDepartments = async () => {
 
     const thead = table.createTHead();
     const headerRow = thead.insertRow();
-    
+
     const headers = ["ID", "Name", "Location"];
     headers.forEach(headerText => {
         const th = document.createElement("th");
@@ -213,58 +237,83 @@ const getAllDepartments = async () => {
 
 
 const getDepartmentbyId = async (id) => {
-    const resp = await fetch("http://localhost:8090/deloitte-hybernate-rest-demo/departments/"+id)
+    const resp = await fetch("http://localhost:8090/deloitte-hybernate-rest-demo/departments/" + id)
     const response = await resp.json();
 
-    const card = document.createElement("div");
-    card.setAttribute("class", "card mb-3");
+    if (response.msg === "Failed") {
+        const card = document.createElement("div");
+        card.setAttribute("class", "card mb-3");
 
-    const cardHeader = document.createElement("div");
-    cardHeader.setAttribute("class", "card-header");
-    cardHeader.textContent = response.name; 
+        const cardHeader = document.createElement("div");
+        cardHeader.setAttribute("class", "card-header");
+        cardHeader.textContent = "Failed to fetch Department";
 
-    const cardBody = document.createElement("div");
-    cardBody.setAttribute("class", "card-body");
-
-    const fields = ["ID", "Location"];
-    fields.forEach(field => {
+        const cardBody = document.createElement("div");
+        cardBody.setAttribute("class", "card-body");
         const p = document.createElement("p");
         p.setAttribute("class", "card-text");
-
-        switch (field) {
-            case "ID":
-                p.textContent = `ID: ${response.id}`;
-                break;
-            case "Location":
-                p.textContent = `Location: ${response.location}`;
-                break;
-
-        }
+        p.textContent = `${response.reason}`;
         cardBody.appendChild(p);
-    });
-    card.appendChild(cardHeader);
-    card.appendChild(cardBody);
 
-    const employeeByIdDiv = document.getElementById("DepartmentbyID");
-    employeeByIdDiv.innerHTML = "";
-    employeeByIdDiv.appendChild(card);
+        card.appendChild(cardHeader);
+        card.appendChild(cardBody);
+
+        const employeeByIdDiv = document.getElementById("DepartmentbyID");
+        employeeByIdDiv.innerHTML = "";
+        employeeByIdDiv.appendChild(card);
+    }
+    else {
+
+        const card = document.createElement("div");
+        card.setAttribute("class", "card mb-3");
+
+        const cardHeader = document.createElement("div");
+        cardHeader.setAttribute("class", "card-header");
+        cardHeader.textContent = response.name;
+
+        const cardBody = document.createElement("div");
+        cardBody.setAttribute("class", "card-body");
+
+        const fields = ["ID", "Location"];
+        fields.forEach(field => {
+            const p = document.createElement("p");
+            p.setAttribute("class", "card-text");
+
+            switch (field) {
+                case "ID":
+                    p.textContent = `ID: ${response.id}`;
+                    break;
+                case "Location":
+                    p.textContent = `Location: ${response.location}`;
+                    break;
+
+            }
+            cardBody.appendChild(p);
+        });
+        card.appendChild(cardHeader);
+        card.appendChild(cardBody);
+
+        const employeeByIdDiv = document.getElementById("DepartmentbyID");
+        employeeByIdDiv.innerHTML = "";
+        employeeByIdDiv.appendChild(card);
+    }
 }
 
 const updateDepartment = async (event) => {
-    event.preventDefault();  
+    event.preventDefault();
 
     const form = document.getElementById('updatedepartmentForm');
     const formData = new FormData(form);
 
     const departments = {
-        id : formData.get('id'),
+        id: formData.get('id'),
         name: formData.get('name'),
         location: formData.get('location')
     };
 
 
     try {
-        const response = await fetch('http://localhost:8090/deloitte-hybernate-rest-demo/departments/'+formData.get('id'), { 
+        const response = await fetch('http://localhost:8090/deloitte-hybernate-rest-demo/departments/' + formData.get('id'), {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json'
@@ -273,10 +322,10 @@ const updateDepartment = async (event) => {
         });
 
         const resp = await response.json();
-        if (resp.msg === "Failed"){
+        if (resp.msg === "Failed") {
             alert(resp.reason);
         }
-        else{
+        else {
             alert('Department Updated successfully!');
             window.location.reload();
         }
@@ -287,17 +336,17 @@ const updateDepartment = async (event) => {
 };
 
 const deleteDepartment = async (id) => {
-    const resp = await fetch('http://localhost:8090/deloitte-hybernate-rest-demo/departments/'+id, { 
+    const resp = await fetch('http://localhost:8090/deloitte-hybernate-rest-demo/departments/' + id, {
         method: 'DELETE',
         headers: {
             'Content-Type': 'application/json'
         }
     });
     const response = await resp.json();
-    if (response.msg === "Failed"){
+    if (response.msg === "Failed") {
         alert(response.reason);
     }
-    else{
+    else {
         alert('Department Deleted successfully!');
         window.location.reload();
     }
@@ -306,7 +355,7 @@ const deleteDepartment = async (id) => {
 }
 
 const addDepartment = async (event) => {
-    event.preventDefault();  
+    event.preventDefault();
 
     const form = document.getElementById('newdepartmentForm');
     const formData = new FormData(form);
@@ -318,7 +367,7 @@ const addDepartment = async (event) => {
 
 
     try {
-        const response = await fetch('http://localhost:8090/deloitte-hybernate-rest-demo/departments', { 
+        const response = await fetch('http://localhost:8090/deloitte-hybernate-rest-demo/departments', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -326,10 +375,10 @@ const addDepartment = async (event) => {
             body: JSON.stringify(departments)
         });
         const resp = await response.json();
-        if (resp.msg === "Failed"){
+        if (resp.msg === "Failed") {
             alert(resp.reason);
         }
-        else{
+        else {
             alert('Department Created successfully!');
             window.location.reload();
         }
