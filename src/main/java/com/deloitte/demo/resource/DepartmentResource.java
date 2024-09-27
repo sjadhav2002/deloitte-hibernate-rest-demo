@@ -32,6 +32,9 @@ public class DepartmentResource {
     public Response addDepartment(Department department) {
         try {
             Department newDepartment = departmentService.addDepartment(department.getName(), department.getLocation());
+            if (newDepartment.getName() == null) {
+            	return Response.status(Response.Status.BAD_REQUEST).entity("Failed").build();
+            }
             return Response.status(Response.Status.CREATED).entity(newDepartment).build();
         } catch (IllegalArgumentException e) {
             return Response.status(Response.Status.BAD_REQUEST).entity(e.getMessage()).build();
@@ -58,6 +61,9 @@ public class DepartmentResource {
     public Response updateDepartment(@PathParam("id") int id, Department department) {
         try {
             Department updatedDepartment = departmentService.updateDepartment(department);
+            if (updatedDepartment.getName() == null) {
+            	return Response.status(Response.Status.BAD_REQUEST).entity("Department Not Found").build();
+            }
             return Response.ok(updatedDepartment).build();
         } catch (IllegalArgumentException e) {
             return Response.status(Response.Status.BAD_REQUEST).entity(e.getMessage()).build();
@@ -68,8 +74,11 @@ public class DepartmentResource {
     @Path("/{id}")
     public Response deleteDepartment(@PathParam("id") int id) {
         try {
-            departmentService.deleteDepartment(id);
-            return Response.status(Response.Status.NO_CONTENT).build();
+            boolean res = departmentService.deleteDepartment(id);
+            if (res) {
+            	return Response.status(Response.Status.BAD_REQUEST).entity("Department Not Found").build();
+            }
+            else return Response.status(Response.Status.CREATED).entity("Success").build();
         } catch (IllegalArgumentException e) {
             return Response.status(Response.Status.BAD_REQUEST).entity(e.getMessage()).build();
         }

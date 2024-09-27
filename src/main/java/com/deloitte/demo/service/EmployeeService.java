@@ -29,11 +29,12 @@ public class EmployeeService {
         return e; 
     }
 
-    public void deleteEmployee(int id) {
+    public boolean deleteEmployee(int id) {
         if (id <= 0) {
             throw new IllegalArgumentException("Invalid employee ID.");
         }
-        employeeRepository.deleteEmployee(id);
+        boolean b = employeeRepository.deleteEmployee(id);
+        return b;
     }
 
     public Employee getEmployeeById(int id) {

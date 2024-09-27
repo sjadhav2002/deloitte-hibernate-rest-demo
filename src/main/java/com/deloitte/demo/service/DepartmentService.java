@@ -30,11 +30,12 @@ public class DepartmentService {
         return updatedDepartment;
     }
 
-        public void deleteDepartment(int id) {
+        public boolean deleteDepartment(int id) {
         if (id <= 0) {
             throw new IllegalArgumentException("Invalid department ID.");
         }
-        departmentRepository.deleteDepartment(id);
+        boolean res = departmentRepository.deleteDepartment(id);
+        return res;
     }
 
         public Department getDepartmentById(int id) {

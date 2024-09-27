@@ -39,10 +39,12 @@ public class DepartmentRepository {
     }
 
     public Department getDepartmentById(int id) {
-        return em.find(Department.class, id); 
+    	Department d = em.find(Department.class, id);
+    	if (d == null)return new Department();
+        return d; 
     }
 
-    public void updateDepartment(Department updatedDepartment) {
+    public boolean updateDepartment(Department updatedDepartment) {
         EntityTransaction transaction = em.getTransaction();
         try {
             transaction.begin();
@@ -50,30 +52,37 @@ public class DepartmentRepository {
             if (existingDepartment != null) {
                 existingDepartment.setName(updatedDepartment.getName());
                 existingDepartment.setLocation(updatedDepartment.getLocation());
+                transaction.commit();
+                return true;
             }
-            transaction.commit();
+            else return false;
+            
         } catch (Exception e) {
             if (transaction.isActive()) {
                 transaction.rollback(); 
             }
             e.printStackTrace();
+            return false;
         }
     }
 
-    public void deleteDepartment(int id) {
+    public boolean deleteDepartment(int id) {
         EntityTransaction transaction = em.getTransaction();
         try {
             transaction.begin();
             Department department = em.find(Department.class, id);
             if (department != null) {
                 em.remove(department); 
-            }
-            transaction.commit();
+                transaction.commit();
+                return true;
+            }else {return false;}
+            
         } catch (Exception e) {
             if (transaction.isActive()) {
                 transaction.rollback(); 
             }
             e.printStackTrace();
+            return false;
         }
     }
 

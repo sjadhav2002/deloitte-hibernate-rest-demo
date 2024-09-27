@@ -19,7 +19,11 @@ public class EmployeeRepository {
     public Employee addEmployee(String firstName, double salary, int department) {
         EntityTransaction transaction = em.getTransaction();
         Department dep = findDepartmentById(department);
+        if(dep == null) {
+        	return new Employee();
+        }
     	Employee e = new Employee(firstName, salary, dep);
+    	
         try {
             transaction.begin();
             em.persist(e);
@@ -59,7 +63,12 @@ public class EmployeeRepository {
                 existingEmployee.setFirstName(firstName);
                 existingEmployee.setSalary(salary);
                 DepartmentRepository depr = new DepartmentRepository();
-                existingEmployee.setDepartment(depr.getDepartmentById(department));
+                Department d = depr.getDepartmentById(department);
+                if (d== null) return new Employee();
+                existingEmployee.setDepartment(d);
+            }
+            else {
+            	return new Employee();
             }
             transaction.commit();
             return existingEmployee;
@@ -72,20 +81,26 @@ public class EmployeeRepository {
         return emp;
     }
 
-    public void deleteEmployee(int id) {
+    public boolean deleteEmployee(int id) {
         EntityTransaction transaction = em.getTransaction();
         try {
             transaction.begin();
             Employee employee = em.find(Employee.class, id);
             if (employee != null) {
                 em.remove(employee);
+                transaction.commit();
+                return true;
             }
-            transaction.commit();
+            else {
+            	return false;
+            }
+            
         } catch (Exception e) {
             if (transaction.isActive()) {
                 transaction.rollback();
             }
             e.printStackTrace();
+            return false;
         }
     }
     

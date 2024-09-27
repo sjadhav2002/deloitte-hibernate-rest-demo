@@ -43,6 +43,9 @@ public class EmployeeResource {
             int deptId = Integer.parseInt(payload.get("department").toString());
             
             Employee employee = employeeService.addEmployee(firstName, salary, deptId);
+            if(employee.getDepartment() == null) {
+            	return Response.status(Response.Status.REQUESTED_RANGE_NOT_SATISFIABLE).entity("Department not found").build(); 
+            }
             return Response.status(Response.Status.CREATED).entity(employee).build(); 
         } catch (IllegalArgumentException e) {
             return Response.status(Response.Status.BAD_REQUEST).entity(e.getMessage()).build(); 
@@ -58,6 +61,7 @@ public class EmployeeResource {
             int deptId = Integer.parseInt(payload.get("department").toString());
             
             Employee Emp = employeeService.updateEmployee(id, firstName, salary, deptId);
+            if (Emp.getDepartment()==null) return Response.status(Response.Status.BAD_REQUEST).entity("Employee or Department not found").build(); 
             return Response.ok(Emp).build();
         } catch (IllegalArgumentException e) {
             return Response.status(Response.Status.BAD_REQUEST).entity(e.getMessage()).build(); 
@@ -68,8 +72,9 @@ public class EmployeeResource {
     @Path("/{id}")
     public Response deleteEmployee(@PathParam("id") int id) {
         try {
-            employeeService.deleteEmployee(id);
-            return Response.noContent().build(); 
+            boolean b = employeeService.deleteEmployee(id);
+            if (b) return Response.status(Response.Status.ACCEPTED).entity("Success").build();
+            else return Response.status(Response.Status.BAD_REQUEST).entity("Employee Not Found").build();
         } catch (IllegalArgumentException e) {
             return Response.status(Response.Status.BAD_REQUEST).entity(e.getMessage()).build(); 
         }

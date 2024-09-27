@@ -32,6 +32,7 @@ public class Department {
 	}
 
 	public String getName() {
+		if (this.name == null) return null;
 		return name;
 	}
 

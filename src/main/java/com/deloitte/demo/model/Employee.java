@@ -60,6 +60,7 @@ public class Employee {
 	}
 	
 	public String getDepartment() {
+		if (this.department == null)return null;
 		return department.getName();
 	}
 
